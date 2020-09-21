@@ -1,3 +1,6 @@
 [submodule "transformer_torch"]
-	path = transformer_torch
+	path = transformer
+	url = https://github.com/yonghee12/transformer_torch.git
+[submodule "transformer"]
+	path = transformer
 	url = https://github.com/yonghee12/transformer_torch.git
