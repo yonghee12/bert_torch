@@ -1,4 +1,6 @@
-from transformer.transformer import *
+import torch.nn as nn
+
+from transformer.transformer import TransformerEncoderBlock, get_padding_mask
 from .blocks import BERTInputBlock
 
 
