@@ -25,3 +25,8 @@ class BERTModel(nn.Module):
         x_emb = self.input(x_input, x_segment)
         output = self.encoder(x_emb, x_mask)
         return output
+
+    def get_info(self, key=None):
+        if key:
+            return self._info.get(key)
+        return self._info
