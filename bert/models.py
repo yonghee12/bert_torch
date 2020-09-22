@@ -17,7 +17,7 @@ class BERTModel(nn.Module):
                       'padding_idx': pad_idx}
 
         self.input = BERTInputBlock(vocab_size, hidden_dim, max_seq, dropout, pad_idx)
-        self.encoder = TransformerEncoderBlock(n_layers, hidden_dim, hidden_dim * 4, n_heads, dropout)
+        self.encoder = TransformerEncoderBlock(n_layers, hidden_dim, hidden_dim * 4, n_heads, 'gelu', dropout)
 
     def forward(self, x_input, x_segment):
         x_mask = get_padding_mask(x_input)
