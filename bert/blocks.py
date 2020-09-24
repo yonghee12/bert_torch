@@ -3,7 +3,7 @@ import torch.nn as nn
 
 
 class BERTInputBlock(nn.Module):
-    def __init__(self, vocab_size, hidden_dim=768, max_seq=512, dropout=0.1, pad_idx=0, pos_pad=True):
+    def __init__(self, vocab_size, hidden_dim=768, max_seq=512, dropout=0.1, pad_idx=0, position_padding=True):
         """
         BERT Input Block
         The reason why segment embedding is initialized with 3 vocab size is because of the pad_idx
@@ -18,12 +18,12 @@ class BERTInputBlock(nn.Module):
         self.positional_emb = nn.Embedding(max_seq + 1, hidden_dim, pad_idx)
         self.segment_emb = nn.Embedding(3, hidden_dim, pad_idx)
         self.dropout = nn.Dropout(p=dropout)
-        self.pos_pad = pos_pad
+        self.position_padding = position_padding
 
     def forward(self, x, x_seg, pos_pad=True):
         pos = torch.arange(start=1, end=x.shape[1] + 1, dtype=torch.long, device=x.device, requires_grad=False)
         pos = pos.unsqueeze(0).expand_as(x)  # (T,) -> (N, T)
-        if self.pos_pad:
+        if self.position_padding:
             pos = pos.masked_fill(x == 0, value=0)
 
         x = self.token_emb(x) + self.positional_emb(pos) + self.segment_emb(x_seg)
