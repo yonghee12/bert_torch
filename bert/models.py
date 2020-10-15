@@ -2,6 +2,7 @@ import torch.nn as nn
 
 from transformer.transformer import TransformerEncoderBlock, get_padding_mask
 from .blocks import BERTInputBlock
+from .tasks import MaskedLanguageModelTask, NextSentencePredictionTask
 
 
 class BERTModel(nn.Module):
@@ -20,8 +21,9 @@ class BERTModel(nn.Module):
         self.input = BERTInputBlock(vocab_size, hidden_dim, max_seq, dropout, pad_idx, pos_pad)
         self.encoder = TransformerEncoderBlock(n_layers, hidden_dim, hidden_dim * 4, n_heads, 'gelu', dropout)
 
-    def forward(self, x_input, x_segment):
-        assert x_input.shape == x_segment.shape, "input and segment must have same dimension"
+    def forward(self, x_input, x_segment=None):
+        if x_segment is not None:
+            assert x_input.shape == x_segment.shape, "input and segment must have same dimension"
 
         x_mask = get_padding_mask(x_input)
         x_emb = self.input(x_input, x_segment)
@@ -33,3 +35,26 @@ class BERTModel(nn.Module):
         if key:
             return self._info.get(key)
         return self._info
+
+
+class BERTMaskedLanguageModel(nn.Module):
+    def __init__(self, bert: BERTModel, vocab_size, hidden_dim):
+        super().__init__()
+        self.bert = bert
+        self.mlm = MaskedLanguageModelTask(vocab_size=vocab_size, hidden_dim=hidden_dim)
+
+    def forward(self, x, x_segment=None):
+        x = self.bert(x, x_segment)
+        return self.mlm(x)
+
+
+class BERTLanguageModel(nn.Module):
+    def __init__(self, bert: BERTModel, vocab_size, hidden_dim):
+        super().__init__()
+        self.bert = bert
+        self.mlm = MaskedLanguageModelTask(vocab_size=vocab_size, hidden_dim=hidden_dim)
+        self.nsp = NextSentencePredictionTask(hidden_dim)
+
+    def forward(self, x, x_segment=None):
+        x = self.bert(x, x_segment)
+        return self.mlm(x), self.nsp(x),
