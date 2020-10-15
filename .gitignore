@@ -1,6 +1,12 @@
 test/*
 test
 
+config.py
+config
+
+_private.py
+_private
+
 pretrained
 pretrained/*
 # Created by https://www.toptal.com/developers/gitignore/api/macos,pycharm+all,python
