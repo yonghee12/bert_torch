@@ -4,3 +4,6 @@
 [submodule "transformer"]
 	path = transformer
 	url = https://github.com/yonghee12/transformer_torch.git
+[submodule "nlp_commons"]
+	path = nlp_commons
+	url = https://github.com/yonghee12/nlp_commons.git
