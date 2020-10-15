@@ -26,5 +26,7 @@ class BERTInputBlock(nn.Module):
         if self.position_padding:
             pos = pos.masked_fill(x == 0, value=0)
 
-        x = self.token_emb(x) + self.positional_emb(pos) + self.segment_emb(x_seg)
+        x = self.token_emb(x) + self.positional_emb(pos)
+        if x_seg is not None:
+            x += self.segment_emb(x_seg)
         return self.dropout(x)
